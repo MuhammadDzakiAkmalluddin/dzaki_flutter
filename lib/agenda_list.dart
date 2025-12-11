@@ -29,9 +29,23 @@ class _AgendaListState extends State<AgendaList> {
 
 
   void _delete(int id) async {
-    await _service.delete(id);
-    _refresh();
-  }
+  await _service.delete(id);
+  _refresh();
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(
+      content: Text(
+        'Agenda berhasil dihapus ❌',
+        style: TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Color(0xFF0D47A1),
+      behavior: SnackBarBehavior.floating,
+      margin: EdgeInsets.all(16),
+      duration: Duration(seconds: 2),
+    ),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -184,3 +198,4 @@ class _AgendaListState extends State<AgendaList> {
     );
   }
 }
+

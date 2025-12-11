@@ -33,16 +33,41 @@ class _AgendaFormState extends State<AgendaForm> {
         judul: _judul.text,
         keterangan: _ket.text,
       );
+
       try {
-        if (widget.agenda == null) {
-          await _service.create(agenda);
-        } else {
+        bool isEdit = widget.agenda != null;
+
+        if (isEdit) {
           await _service.update(agenda.id!, agenda);
+        } else {
+          await _service.create(agenda);
         }
+
+        // 🔔 NOTIF BERHASIL
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              isEdit
+                  ? 'Agenda berhasil diperbarui ✏'
+                  : 'Agenda berhasil disimpan ✔',
+              style: const TextStyle(color: Colors.white),
+            ),
+            backgroundColor: const Color(0xFF0D47A1),
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.all(16),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+
         Navigator.pop(context, true);
+
       } catch (e) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Gagal simpan: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Gagal simpan: $e'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
       }
     }
   }
@@ -102,6 +127,8 @@ class _AgendaFormState extends State<AgendaForm> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+
+                      // INPUT JUDUL
                       TextFormField(
                         controller: _judul,
                         style: const TextStyle(
@@ -115,7 +142,10 @@ class _AgendaFormState extends State<AgendaForm> {
                         validator: (v) =>
                             v == null || v.isEmpty ? 'Wajib isi judul' : null,
                       ),
+
                       const SizedBox(height: 10),
+
+                      // INPUT KETERANGAN
                       TextFormField(
                         controller: _ket,
                         decoration: const InputDecoration(
@@ -124,9 +154,10 @@ class _AgendaFormState extends State<AgendaForm> {
                         ),
                         style: const TextStyle(color: Color(0xFF1A237E)),
                       ),
+
                       const SizedBox(height: 25),
 
-                      // tombol simpan
+                      // TOMBOL SIMPAN
                       ElevatedButton(
                         onPressed: _submit,
                         style: ElevatedButton.styleFrom(
@@ -138,7 +169,9 @@ class _AgendaFormState extends State<AgendaForm> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 40, vertical: 14),
+                            horizontal: 40,
+                            vertical: 14,
+                          ),
                         ),
                         child: Text(
                           'Simpan',
